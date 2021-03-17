@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+
+  <body>
+    <%- include('./partials/nav.ejs') %>
+
+    <h2
+      class="mt-6 mb-5 is-size-3 has-text-weight-bold is-uppercase has-text-centered"
+    >
+      Do you have any inquiry?
+    </h2>
+    <p>
+      <% if(errors) { %>
+        <p><%= error[0].msg %></p>
+       <% } %>
+    </p>
+
+    <div class="container p-2 pb-6">
+      <div class="columns is-desktop">
+        <div class="column is-4 is-offset-4">
+          <article class="message is-success">
+            <div class="message-body">Inquiry has been successfully sent.</div>
+          </article>
+          <form action="/inquiries/form" method="POST">
+            <div class="field">
+              <label class="label" for="name">Name</label>
+              <div class="control">
+                <input
+                  class="input"
+                  type="text"
+                  name="name"
+                  id="name"
+                  placeholder="Name"
+                />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="email">Email</label>
+              <input
+                class="input is-success"
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email"
+                required
+              />
+              <p class="help is-success">This email is invalid</p>
+            </div>
+
+            <div class="field">
+              <label class="label" for="message">Message</label>
+              <div class="control">
+                <textarea
+                  class="textarea"
+                  name="message"
+                  id="message"
+                  placeholder="Message"
+                  required
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox" name="subscribe" />
+                  I would like to subscribe Tasty Treats
+                </label>
+              </div>
+            </div>
+
+            <div class="field">
+              <div
+                class="g-recaptcha"
+                name="recaptcha"
+                data-sitekey="6LfkHIMaAAAAAAfT6WsjmUPk6p6SLpTl0jBd2TP4"
+              ></div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <button type="submit" class="button is-fullwidth is-rounded">
+                  Send
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

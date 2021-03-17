@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+  <body>
+    <%- include('./partials/nav.ejs') %>
+
+    <h2
+      class="mt-6 mb-5 is-size-3 has-text-weight-bold is-uppercase has-text-centered"
+    >
+      All inquiries
+    </h2>
+
+    <div class="container p-3">
+      <div
+        class="columns is-desktop is-flex is-flex-wrap-wrap is-justify-content-center"
+      >
+        <% if (inquiries.length > 0) { %> <% for (let inquiry of inquiries) {%>
+        <div class="column is-5 m-1">
+          <div class="box has-background-dark has-text-primary-light">
+            <div class="field">
+              <label class="label has-text-primary-light m-0">Name</label>
+              <p><%= inquiry.name %></p>
+            </div>
+
+            <div class="field">
+              <label class="label has-text-primary-light m-0">Email</label>
+              <p><%= inquiry.email %></p>
+            </div>
+
+            <div class="field">
+              <label class="label has-text-primary-light m-0">Message</label>
+              <p><%= inquiry.message %></p>
+            </div>
+
+            <div class="field">
+              <label class="label has-text-primary-light m-0">Subscribed</label>
+              <p><%= inquiry.subscribe %></p>
+            </div>
+          </div>
+        </div>
+        <% } %> <% } else { %>
+        <p class="is-size-4">No inquiries at the moment...</p>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>
