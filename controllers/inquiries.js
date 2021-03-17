@@ -1,82 +1,50 @@
 const fs = require('fs');
-const request = require('request');
+const fileDataParser = require('../utils/fileDataParser');
 
-exports.getInquiries = function (req, res) {
-  const inquiryDataSchema = ['name', 'email', 'message', 'subscribe'];
-  const inquiriesData = [];
-
+exports.getInquiries = async function (req, res) {
   try {
     fs.readFile('./data/inquiries.txt', (err, result) => {
-      let splittedLinesOfData = result.toString().split(/\r?\n/);
-
-      for (let i = 0; i < splittedLinesOfData.length - 1; i++) {
-        const splittedLine = splittedLinesOfData[i].split(',');
-        const inquiry = {};
-
-        for (let j = 0; j < splittedLine.length; j++) {
-          inquiry[inquiryDataSchema[j]] = splittedLine[j];
-        }
-
-        inquiriesData.push(inquiry);
-        console.log(inquiriesData);
+      if (err) {
+        throw new Error('Something went wrong, please try again.');
       }
+
+      const inquiriesData = fileDataParser(result, '___');
 
       res.render('inquiries', { inquiries: inquiriesData });
     });
   } catch (err) {
-    res.render('404', { error: 'Something went wrong. Please try again.' });
+    res.render('404', { error: err.message });
   }
 };
 
 exports.getInquiryForm = function (req, res) {
-  res.render('form');
+  res.render('form', {
+    errors: false,
+    message: false,
+    captchaError: false,
+    inputValues: false,
+  });
 };
 
-exports.sendInquiryForm = (req, res) => {
-  const captcha = req.body['g-recaptcha-response'];
+exports.sendInquiryForm = async (req, res) => {
+  const { name, email, message, subscribe } = req.body;
+  const isSubscribed = subscribe ? 'yes' : 'no';
+  const inquiryData = `${name}___${email}___${message}___${isSubscribed}\n`;
 
-  if (
-    captcha === undefined ||
-    captcha === '' ||
-    captcha === null
-  ) {
-    console.log(captcha)
-    return res.json({ success: false, msg: 'Please select captcha' });
-  }
+  try {
+    fs.appendFile('./data/inquiries.txt', inquiryData, (err, result) => {
+      if (err) {
+        throw new Error('Something went wrong, please try again.');
+      }
 
-  // Secret key
-  const secretkey = '6LfkHIMaAAAAAAly5zSoTHkglfvIl9nsqO-RbBrc';
-
-  // Verify URL
-  const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretkey}&response=${captcha}&remoteip=${req.connection.remoteAddress}`;
-
-  // Make Request to VerifyURL
-  request(verifyUrl, (err, response, body) => {
-    body = JSON.parse(body);
-
-    // If not successful
-    if (body.success !== undefined && !body.success) {
-      return res.json({ success: false, msg: 'Failed captcha verification' });
-    }
-
-    // If successful
-    // return res.json({ success: true, msg: 'Captcha passed' });
-    const { name, email, message, subscribe } = req.body;
-    console.log(req.body);
-  
-    const isSubscribed = subscribe ? 'yes' : 'no';
-  
-    const inquiryData = `${name},${email},${message},${isSubscribed}\n`;
-  
-    try {
-      fs.appendFile('./data/inquiries.txt', inquiryData, () => {});
       res.render('form', {
+        errors: false,
         message: 'Inquiry has been successfully sent.',
+        captchaError: false,
+        inputValues: false,
       });
-    } catch (err) {
-      res.render('404', { error: 'Something went wrong. Please try again.' });
-    }
-
-  });
-
+    });
+  } catch (err) {
+    res.render('404', { error: err.message });
+  }
 };

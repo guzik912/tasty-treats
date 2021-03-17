@@ -1,7 +1,9 @@
 const { validationResult } = require('express-validator');
 
-module.exports = validations => {
+module.exports = (validations) => {
   return async (req, res, next) => {
+    const { name, email, message, subscribe } = req.body;
+
     for (let validation of validations) {
       const result = await validation.run(req);
       if (result.errors.length) break;
@@ -12,9 +14,17 @@ module.exports = validations => {
     if (errors.isEmpty()) {
       return next();
     }
-    
-    res.render('form', { "errors": errors.array() });
-    console.log(errors.array())
-    // return res.status(400).json({ errors: errors.array() });
+
+    res.render('form', {
+      errors: errors.array(),
+      message: false,
+      captchaError: false,
+      inputValues: {
+        name,
+        email,
+        message,
+        subscribe,
+      },
+    });
   };
 };

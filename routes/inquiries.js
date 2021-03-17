@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-// const inquiriesController = require('../controller/inquiries');
 const inquiriesController = require('../controllers/inquiries');
 const isValidate = require('../middlewares/validate');
 const isRecaptched = require('../middlewares/recaptcha');
@@ -33,6 +32,7 @@ router.post(
       .isEmpty()
       .withMessage('Message can not be empty'),
   ]),
+  isRecaptched(),
   inquiriesController.sendInquiryForm
 );
 

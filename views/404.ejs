@@ -3,8 +3,13 @@
   <%- include('./partials/head.ejs') %>
   <body>
     <%- include('./partials/nav.ejs') %>
-    <h2 class="mt-6 mb-5 is-size-5 is-uppercase has-text-centered">
-      Something went wrong. Please try again.
-    </h2>
+
+    <div class="main-content container">
+      <h2 class="mt-6 mb-5 is-size-5 is-uppercase has-text-centered">
+        <% if(error) {%> <%= error%> <% } %>
+      </h2>
+    </div>
+
+    <%- include('./partials/footer.ejs') %>
   </body>
 </html>

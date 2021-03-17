@@ -5,10 +5,17 @@
   <body>
     <%- include('./partials/nav.ejs') %>
 
-    <h1
-      class="mt-6 mb-5 is-size-3 has-text-weight-bold is-uppercase has-text-centered"
-    >
-      Welcome in Tasty Treats!
-    </h1>
+    <div class="main-content container">
+      <h1
+        class="mt-6 mb-5 is-size-3 has-text-weight-bold is-uppercase has-text-centered"
+      >
+        Welcome to Tasty Treats!
+      </h1>
+      <div class="is-flex is-justify-content-center mt-6">
+        <img class="cook-img" src="/img/cook-bgc.svg" alt="Background image" />
+      </div>
+    </div>
+
+    <%- include('./partials/footer.ejs') %>
   </body>
 </html>

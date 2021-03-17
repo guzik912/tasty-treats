@@ -2,56 +2,43 @@ const request = require('request');
 
 module.exports = () => {
   return async (req, res, next) => {
+    const { name, email, message, subscribe } = req.body;
     const captcha = req.body['g-recaptcha-response'];
 
-    if (
-      captcha === undefined ||
-      captcha === '' ||
-      captcha === null
-    ) {
-      console.log('nie wybrales captcha')
-      return res.render('form', { msg: 'Please select captcha' });
+    if (captcha === undefined || captcha === '' || captcha === null) {
+      return res.render('form', {
+        errors: false,
+        message: false,
+        success: false,
+        captchaError: 'Please select captcha',
+        inputValues: { name, email, message, subscribe },
+      });
     }
 
-    // Secret key
-    const secretkey = '6LfkHIMaAAAAAAly5zSoTHkglfvIl9nsqO-RbBrc';
+    const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${captcha}&remoteip=${req.connection.remoteAddress}`;
 
-    // Verify URL
-    const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretkey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+    try {
+      request(verifyUrl, (err, response, body) => {
+        if (err) {
+          throw new Error('Something went wrong, please try again.');
+        }
 
-    // Make Request to VerifyURL
-    request(verifyUrl, (err, response, body) => {
-      body = JSON.parse(body);
+        body = JSON.parse(body);
 
-      // If not successful
-      if (body.success !== undefined && !body.success) {
-        console.log('lipa z weryfikacja captcha')
-        return res.render({ msg: 'Failed captcha verification. Please try again' });
-      }
-
-      // If successful
-      // return res.json({ success: true, msg: 'Captcha passed' });
-      next();
-    });
-
-
-
-
-
-
-
-  //   // Secret key
-  // const secretkey = '6Ld1FIMaAAAAADvlHpoD23TH6njcfdGWyygiIcN-';
-
-  // // Verify URL
-  // const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretkey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
-
-  // return fetch(verifyUrl, { method: 'POST' })
-  //   .then(res => {
-  //     res.json();
-  //     console.log(res);
-  //   })
-  //   .then(json => res.send(json))
-  // };
-};
+        if (body.success !== undefined && body.success !== true) {
+          return res.render('form', {
+            errors: false,
+            message: false,
+            success: false,
+            captchaError: 'Failed captcha verification.',
+            inputValues: { name, email, message, subscribe },
+          });
+        } else {
+          next();
+        }
+      });
+    } catch (err) {
+      res.render('404', { error: err.message });
+    }
+  };
 };

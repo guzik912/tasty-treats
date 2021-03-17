@@ -10,62 +10,79 @@
     >
       Do you have any inquiry?
     </h2>
-    <p>
-      <% if(errors) { %>
-        <p><%= error[0].msg %></p>
-       <% } %>
-    </p>
 
-    <div class="container p-2 pb-6">
+    <div class="main-content container p-2 pb-6">
       <div class="columns is-desktop">
-        <div class="column is-4 is-offset-4">
+        <div class="column is-4 is-offset-4 mb-2">
+          <% if(message) {%>
           <article class="message is-success">
-            <div class="message-body">Inquiry has been successfully sent.</div>
+            <div class="message-body"><%= message %></div>
           </article>
+          <% } %>
+        </div>
+      </div>
+      <div class="columns is-desktop">
+        <div class="form-container column is-4 is-offset-4">
           <form action="/inquiries/form" method="POST">
             <div class="field">
               <label class="label" for="name">Name</label>
               <div class="control">
                 <input
-                  class="input"
+                  class="<%if(errors && errors[0]['param'] == 'name') { %>input is-danger<%} else {%>input<%}%>"
                   type="text"
                   name="name"
                   id="name"
                   placeholder="Name"
+                  value="<%if(inputValues) {%><%= inputValues.name%><%}%>"
                 />
+                <%if(errors && errors[0]['param'] == 'name') { %>
+                <p class="help is-danger"><%= errors[0].msg %></p>
+                <%}%>
               </div>
             </div>
 
             <div class="field">
               <label class="label" for="email">Email</label>
-              <input
-                class="input is-success"
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Email"
-                required
-              />
-              <p class="help is-success">This email is invalid</p>
+              <div class="control">
+                <input
+                  class="<%if(errors && errors[0]['param'] == 'email') { %>input is-danger<%} else {%>input<%}%>"
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  value="<%if(inputValues) {%><%= inputValues.email%><%}%>"
+                />
+                <%if(errors && errors[0]['param'] == 'email') { %>
+                <p class="help is-danger"><%= errors[0].msg %></p>
+                <%}%>
+              </div>
             </div>
 
             <div class="field">
               <label class="label" for="message">Message</label>
               <div class="control">
                 <textarea
-                  class="textarea"
+                  class="<%if(errors && errors[0]['param'] == 'message') { %>textarea is-danger<%} else {%>textarea<%}%>"
                   name="message"
                   id="message"
                   placeholder="Message"
-                  required
-                ></textarea>
+                >
+<%if(inputValues) {%><%= inputValues.message%><%}%></textarea
+                >
+                <%if(errors && errors[0]['param'] == 'message') { %>
+                <p class="help is-danger"><%= errors[0].msg %></p>
+                <%}%>
               </div>
             </div>
 
             <div class="field">
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" name="subscribe" />
+                  <input
+                    type="checkbox"
+                    name="subscribe"
+                    checked="<%if(inputValues && inputValues.subscribe == 'on') {%> <%= true %><% } else { %><%= false %><% } %>"
+                  />
                   I would like to subscribe Tasty Treats
                 </label>
               </div>
@@ -77,11 +94,17 @@
                 name="recaptcha"
                 data-sitekey="6LfkHIMaAAAAAAfT6WsjmUPk6p6SLpTl0jBd2TP4"
               ></div>
+              <%if(captchaError) { %>
+              <p class="help is-danger"><%= captchaError %></p>
+              <%}%>
             </div>
 
             <div class="field">
               <div class="control">
-                <button type="submit" class="button is-fullwidth is-rounded">
+                <button
+                  type="submit"
+                  class="button button-form is-fullwidth is-rounded"
+                >
                   Send
                 </button>
               </div>
@@ -91,5 +114,6 @@
       </div>
     </div>
 
+    <%- include('./partials/footer.ejs') %>
   </body>
 </html>
