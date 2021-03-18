@@ -1,5 +1,5 @@
-module.exports = (file, splitChar) => {
-  const objSchema = ['name', 'email', 'message', 'subscribe'];
+module.exports = (file, splitChar, sortBy) => {
+  const objSchema = ['name', 'email', 'message', 'subscribe', 'timestamp'];
   const result = [];
   let splittedLinesOfFile = file.toString().split(/\r?\n/);
 

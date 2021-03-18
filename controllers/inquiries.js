@@ -1,5 +1,6 @@
 const fs = require('fs');
 const fileDataParser = require('../utils/fileDataParser');
+const sortData = require('../utils/sortData');
 
 exports.getInquiries = async function (req, res) {
   try {
@@ -8,7 +9,7 @@ exports.getInquiries = async function (req, res) {
         throw new Error('Something went wrong, please try again.');
       }
 
-      const inquiriesData = fileDataParser(result, '___');
+      const inquiriesData = sortData(fileDataParser(result, '___'), 'desc');
 
       res.render('inquiries', { inquiries: inquiriesData });
     });
@@ -28,8 +29,9 @@ exports.getInquiryForm = function (req, res) {
 
 exports.sendInquiryForm = async (req, res) => {
   const { name, email, message, subscribe } = req.body;
+  const ts = Date.now();
   const isSubscribed = subscribe ? 'yes' : 'no';
-  const inquiryData = `${name}___${email}___${message}___${isSubscribed}\n`;
+  const inquiryData = `${name}___${email}___${message}___${isSubscribed}___${ts}\n`;
 
   try {
     fs.appendFile('./data/inquiries.txt', inquiryData, (err, result) => {
